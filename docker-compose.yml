@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  geometry:
+    image: ubuntu/ms-geometry-api
+    ports:
+      - "5002:5002"
+    build: .
+    networks:
+      - math_api
+  equation:
+    image: ubuntu/ms-equation-api
+    ports:
+      - "5001:5001"
+    build: .
+    networks:
+      - math_api
+networks:
+  math_api:
