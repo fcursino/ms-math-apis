@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <a href="#" id="nav-geometry">Geometry</a>
+    <a href="#" id="nav-equation">Equations</a>
+  </nav>
+
+  <!-- Geometry Screen -->
+  <div class="container" id="geometry-container">
+    <h1>Geometry - Area Calculator</h1>
+
+    <!-- Circle Area Form -->
+    <form id="circuloForm">
+      <h2>Circle Area</h2>
+      <label for="circuloRaio">Radius (r):</label>
+      <input type="number" id="circuloRaio" name="r" step="any" required>
+      <button type="submit">Calculate</button>
+      <div class="result" id="circuloResult"></div>
+    </form>
+
+    <!-- Square Area Form -->
+    <form id="quadradoForm">
+      <h2>Square Area</h2>
+      <label for="quadradoLado">Side (l):</label>
+      <input type="number" id="quadradoLado" name="l" step="any" required>
+      <button type="submit">Calculate</button>
+      <div class="result" id="quadradoResult"></div>
+    </form>
+
+    <!-- Triangle Area Form -->
+    <form id="trianguloForm">
+      <h2>Triangle Area</h2>
+      <label for="trianguloBase">Base (a):</label>
+      <input type="number" id="trianguloBase" name="a" step="any" required>
+      <label for="trianguloAltura">Height (b):</label>
+      <input type="number" id="trianguloAltura" name="b" step="any" required>
+      <button type="submit">Calculate</button>
+      <div class="result" id="trianguloResult"></div>
+    </form>
+  </div>
+
+  <!-- Equations Screen -->
+  <div class="container hidden" id="equation-container">
+    <h1>Equations - Proportions</h1>
+
+    <!-- Direct Proportion Form -->
+    <form id="proporcaoDiretaForm">
+      <h2>Direct Proportion</h2>
+      <label for="diretaA">A:</label>
+      <input type="number" id="diretaA" name="a" step="any" required>
+      <label for="diretaB">B:</label>
+      <input type="number" id="diretaB" name="b" step="any" required>
+      <label for="diretaC">C:</label>
+      <input type="number" id="diretaC" name="c" step="any" required>
+      <button type="submit">Calculate</button>
+      <div class="result" id="diretaResult"></div>
+    </form>
+
+    <!-- Inverse Proportion Form -->
+    <form id="proporcaoInversaForm">
+      <h2>Inverse Proportion</h2>
+      <label for="inversaA">A:</label>
+      <input type="number" id="inversaA" name="a" step="any" required>
+      <label for="inversaB">B:</label>
+      <input type="number" id="inversaB" name="b" step="any" required>
+      <label for="inversaC">C:</label>
+      <input type="number" id="inversaC" name="c" step="any" required>
+      <button type="submit">Calculate</button>
+      <div class="result" id="inversaResult"></div>
+    </form>
+  </div>
+
+  <script>
+    const apiGeometryUrl = 'http://localhost:5002/geometria';
+    const apiEquationUrl = 'http://localhost:5001/equacao';
+
+    // Navigation between screens with active link highlight
+    document.getElementById('nav-geometry').addEventListener('click', () => {
+      document.getElementById('geometry-container').classList.remove('hidden');
+      document.getElementById('equation-container').classList.add('hidden');
+      setActiveNavLink('nav-geometry');
+    });
+
+    document.getElementById('nav-equation').addEventListener('click', () => {
+      document.getElementById('geometry-container').classList.add('hidden');
+      document.getElementById('equation-container').classList.remove('hidden');
+      setActiveNavLink('nav-equation');
+    });
+
+    // Function to set the active link in the navbar
+    function setActiveNavLink(activeId) {
+      const links = document.querySelectorAll('nav a');
+      links.forEach(link => {
+        if (link.id === activeId) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    }
+
+    document.getElementById('circuloForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const raio = document.getElementById('circuloRaio').value;
+      try {
+        const response = await fetch(`${apiGeometryUrl}/area-circulo`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ r: parseFloat(raio) })
+        });
+        const result = await response.json();
+        document.getElementById('circuloResult').textContent = `Área: ${result}`;
+      } catch (error) {
+        document.getElementById('circuloResult').textContent = 'Erro ao calcular!';
+      }
+    });
+
+    document.getElementById('quadradoForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const lado = document.getElementById('quadradoLado').value;
+      try {
+        const response = await fetch(`${apiGeometryUrl}/area-quadrado`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ l: parseFloat(lado) })
+        });
+        const result = await response.json();
+        document.getElementById('quadradoResult').textContent = `Área: ${result}`;
+      } catch (error) {
+        document.getElementById('quadradoResult').textContent = 'Erro ao calcular!';
+      }
+    });
+
+    document.getElementById('trianguloForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const base = document.getElementById('trianguloBase').value;
+      const altura = document.getElementById('trianguloAltura').value;
+      try {
+        const response = await fetch(`${apiGeometryUrl}/area-triangulo`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ a: parseFloat(base), b: parseFloat(altura) })
+        });
+        const result = await response.json();
+        document.getElementById('trianguloResult').textContent = `Área: ${result}`;
+      } catch (error) {
+        document.getElementById('trianguloResult').textContent = 'Erro ao calcular!';
+      }
+    });
+
+    document.getElementById('proporcaoDiretaForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const a = document.getElementById('diretaA').value;
+      const b = document.getElementById('diretaB').value;
+      const c = document.getElementById('diretaC').value;
+      try {
+        const response = await fetch(`${apiEquationUrl}/proporcao-direta`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ a: parseFloat(a), b: parseFloat(b), c: parseFloat(c) })
+        });
+        const result = await response.json();
+        document.getElementById('diretaResult').textContent = `Result: ${result}`;
+      } catch (error) {
+        document.getElementById('diretaResult').textContent = 'Error calculating!';
+      }
+    });
+
+    document.getElementById('proporcaoInversaForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const a = document.getElementById('inversaA').value;
+      const b = document.getElementById('inversaB').value;
+      const c = document.getElementById('inversaC').value;
+      try {
+        const response = await fetch(`${apiEquationUrl}/proporcao-inversa`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ a: parseFloat(a), b: parseFloat(b), c: parseFloat(c) })
+        });
+        const result = await response.json();
+        document.getElementById('inversaResult').textContent = `Result: ${result}`;
+      } catch (error) {
+        document.getElementById('inversaResult').textContent = 'Error calculating!';
+      }
+    });
+  </script>
+</body>
+</html>

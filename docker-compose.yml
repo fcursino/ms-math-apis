@@ -2,17 +2,17 @@ version: "3"
 
 services:
   geometry:
-    image: ubuntu/ms-geometry-api
+    build:
+      context: ./api-geometria
     ports:
       - "5002:5002"
-    build: .
     networks:
       - math_api
   equation:
-    image: ubuntu/ms-equation-api
+    build:
+      context: ./api-equacao
     ports:
       - "5001:5001"
-    build: .
     networks:
       - math_api
 networks:
